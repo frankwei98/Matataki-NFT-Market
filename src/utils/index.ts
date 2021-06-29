@@ -1,12 +1,15 @@
 import { isEmpty } from 'lodash';
+import { WordItemState } from '../types/utiils.d';
+import { User } from '../types/User.types.d';
+
 // 首字母大写
 export const firstUpperCase = ([first, ...other]: any) => {
   return first.toLocaleUpperCase() + other.join('');
 };
 
 // 短钱包账号
-export const shortedWalletAccount = (account: string) => {
-  if (!account) return;
+export const shortedWalletAccount = (account: string | null) => {
+  if (!account) return '';
   return account.slice(0, 6) + '...' + account.slice(-4);
 };
 
@@ -23,9 +26,14 @@ export const diffData = (newData: any, oldData: any) => {
   return data;
 };
 
-export const wordItem = (item: any) => {
+/**
+ * 首字母 单词分类
+ * @param item
+ * @returns
+ */
+export const wordItem = (item: User[]): WordItemState => {
   if (isEmpty(item)) {
-    return [];
+    return {} as WordItemState;
   }
 
   let list: any = {};
@@ -35,7 +43,7 @@ export const wordItem = (item: any) => {
   }
   list['#'] = [];
 
-  item.forEach((i: any) => {
+  item.forEach(i => {
     let key = i.username.substr(0, 1).toLocaleLowerCase();
     if (list[key]) {
       list[key].push(i);

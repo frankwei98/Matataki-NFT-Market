@@ -382,10 +382,8 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           ) : null}
           {isMyself ? (
             <StyledHeadEdit>
-              <Button
-                onClick={() => router.push(`/${username}/edit`)}
-                size='small'>
-                EDIT PROFILE
+              <Button onClick={() => router.push(`/${username}/edit`)}>
+                Edit
               </Button>
             </StyledHeadEdit>
           ) : null}
@@ -488,6 +486,7 @@ const StyledHeadUserInfo = styled.div`
     line-height: 1.2;
     padding: 0;
     margin: 6px 0 0 0;
+    max-width: 600px;
   }
 `;
 const StyledHeadRight = styled.div`

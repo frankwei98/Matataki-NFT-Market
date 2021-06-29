@@ -1,45 +1,42 @@
-import axios from 'axios';
+import axios, { AxiosAdapter, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { getCookie } from '../utils/cookie';
+import {
+  cacheAdapterEnhancer,
+  throttleAdapterEnhancer,
+} from 'axios-extensions';
+
+const options = {
+  enabledByDefault: false,
+};
 
 const backendClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
   timeout: 1000 * 60,
-  headers: {},
   withCredentials: false,
+  headers: { 'Cache-Control': 'no-cache' },
+  adapter: throttleAdapterEnhancer(
+    cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, options)
+  ),
 });
 
-const mockClient = axios.create({
-  baseURL: 'http://localhost:4000/api',
+export const matatakiApiClient = axios.create({
+  baseURL: '/api/matataki/',
   timeout: 1000 * 60,
-  headers: {},
   withCredentials: false,
+  headers: { 'Cache-Control': 'no-cache' },
+  adapter: throttleAdapterEnhancer(
+    cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, options)
+  ),
 });
 
-const localClient = axios.create({
-  baseURL: 'http://localhost:3688',
+export const apiClient = axios.create({
   timeout: 1000 * 60,
-  headers: {},
   withCredentials: false,
+  headers: { 'Cache-Control': 'no-cache' },
+  adapter: throttleAdapterEnhancer(
+    cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, options)
+  ),
 });
-
-localClient.interceptors.request.use(
-  config => {
-    let token = getCookie('token');
-    if (token) {
-      config.headers = {
-        Authorization: `Bearer ${token}`,
-      };
-    }
-    return config;
-  },
-  error => {
-    // Do something with request error
-    return Promise.reject(error);
-  }
-);
-
-const localFetcher = (url: string) =>
-  localClient.get(url).then(res => res.data);
 
 // Just copy from matataki-fe
 backendClient.interceptors.request.use(
@@ -82,4 +79,4 @@ backendClient.interceptors.response.use(
 );
 
 export default backendClient;
-export { backendClient, mockClient, localClient, localFetcher };
+export { backendClient };
